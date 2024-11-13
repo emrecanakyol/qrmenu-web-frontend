@@ -85,14 +85,14 @@ const Contact = () => {
           >
             <Flex gap={2} alignItems={"center"}>
               <Image alt="tel" src="/tel-icon.png" w={"22px"} h={"22px"} />
-              <NextLink href="tel:+905338516158" passHref>
+              <NextLink href="tel:+905320127065" passHref>
                 <Text color={"#282d31"} fontWeight={"500"} fontSize={"18px"}>
-                  0 (533) 851 61 58
+                  0 (532) 012 70 65
                 </Text>
               </NextLink>
             </Flex>
 
-            <NextLink href="https://www.instagram.com/van.gogh.cafe.fastfood/">
+            <NextLink href="https://www.instagram.com/beykozbalikcisi.trb/">
               <Flex
                 gap={2}
                 mt={{
@@ -110,7 +110,29 @@ const Contact = () => {
                   h={"20px"}
                 />
                 <Text color={"#282d31"} fontWeight={"400"} fontSize={"18px"}>
-                  @van.gogh.cafe.fastfood
+                  @beykozbalikcisi.trb
+                </Text>
+              </Flex>
+            </NextLink>
+            <NextLink href="https://www.facebook.com/profile.php?id=61567858995945&locale=tr_TR">
+              <Flex
+                gap={2}
+                mt={{
+                  xl: 0,
+                  lg: 0,
+                  md: 0,
+                  base: 5,
+                }}
+                alignItems={"center"}
+              >
+                <Image
+                  alt="facebook"
+                  src="/facebook-icon.png"
+                  w={"20px"}
+                  h={"20px"}
+                />
+                <Text color={"#282d31"} fontWeight={"400"} fontSize={"18px"}>
+                  Beykoz Balıkçısı
                 </Text>
               </Flex>
             </NextLink>

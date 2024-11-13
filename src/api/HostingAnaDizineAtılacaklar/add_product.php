@@ -2,6 +2,11 @@
 // db_connection.php dosyasını dahil ediyoruz
 include('db_connection.php');
 
+// Veritabanı bağlantısının sağlandığından emin olalım
+if ($conn->connect_error) {
+    die(json_encode(['status' => 'error', 'message' => 'Bağlantı hatası: ' . $conn->connect_error]));
+}
+
 // Veritabanında `products` tablosunun var olup olmadığını kontrol ediyoruz
 $table_check_query = "SHOW TABLES LIKE 'products'";
 $table_check_result = $conn->query($table_check_query);
@@ -42,16 +47,18 @@ try {
     // Veritabanı bağlantısını kullanarak ürün ekleme sorgusunu yazalım
     $query = "INSERT INTO products (category_id, product_name, product_price) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("isd", $category_id, $product_name, $product_price); // "i" = integer, "s" = string, "d" = double
-
-    // Sorguyu çalıştırma
-    if ($stmt->execute()) {
-        // Başarılı ekleme durumu
-        echo json_encode(['status' => 'success', 'message' => 'Ürün başarıyla eklendi.']);
-    } else {
-        // Başarısız işlem durumu
-        echo json_encode(['status' => 'error', 'message' => 'Ürün eklenirken bir hata oluştu.']);
+    
+    if ($stmt === false) {
+        throw new Exception('Sorgu hazırlama hatası: ' . $conn->error);
     }
+
+    $stmt->bind_param("isd", $category_id, $product_name, $product_price);
+    
+    if (!$stmt->execute()) {
+        throw new Exception('Ürün eklenirken hata oluştu: ' . $stmt->error);
+    }
+    
+    echo json_encode(['status' => 'success', 'message' => 'Ürün başarıyla eklendi.']);
 } catch (Exception $e) {
     // Hata mesajı
     echo json_encode(['status' => 'error', 'message' => 'Veritabanı hatası: ' . $e->getMessage()]);
@@ -59,12 +66,4 @@ try {
 
 // Bağlantıyı kapatalım
 $conn->close();
-
-try {
-    $stmt->execute();
-    echo json_encode(['status' => 'success', 'message' => 'Ürün başarıyla eklendi!']);
-} catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Ürün eklenirken bir hata oluştu: ' . $e->getMessage()]);
-}
-
 ?>

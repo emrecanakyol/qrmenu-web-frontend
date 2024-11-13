@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/api/constants";
 import {
   Box,
   Button,
@@ -24,13 +25,16 @@ function DesktopHome() {
   const [categories, setCategories] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
 
-
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await fetch('https://beykozbalikcisi.com/get_categories.php');
+        const response = await fetch(`${API_URL}/get_categories.php`);
         const data = await response.json();
         setCategories(data);
+        // İlk kategori seçili olarak gelsin
+        if (data.length > 0) {
+          setSelectedCategory(data[0]); // İlk kategoriyi seçiyoruz
+        }
       } catch (error) {
         console.error('Veriler yüklenemedi:', error);
       }
@@ -45,7 +49,7 @@ function DesktopHome() {
       const getProductsByCategory = async () => {
         try {
           const response = await fetch(
-            `https://beykozbalikcisi.com/get_products_by_category.php?category_id=${selectedCategory.id}`
+            `${API_URL}/get_products_by_category.php?category_id=${selectedCategory.id}`
           );
           const data = await response.json();
           if (data.status === "success") {
@@ -109,7 +113,8 @@ function DesktopHome() {
             flexDirection={"column"}
             align={"center"}
             minW={"200px"}
-            backgroundColor={"#D1A67C"}
+            minH={"272px"}
+            backgroundColor={"#282D30"}
             borderRadius={10}
             p={3}
             w={"10%"}
@@ -117,10 +122,11 @@ function DesktopHome() {
           >
             <Image
               alt="category-image"
-              src={`https://beykozbalikcisi.com/${item?.photo}`}
+              src={`${API_URL}/${item?.photo}`}
               w={"100%"}
-              h={"100%"}
+              h={175}
               borderRadius={7}
+              objectFit={"cover"}
             />
             <Button
               m={4}

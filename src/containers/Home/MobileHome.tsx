@@ -1,4 +1,5 @@
 "use client";
+import { API_URL } from "@/api/constants";
 import {
   Box,
   Button,
@@ -18,7 +19,7 @@ function MobileHome() {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await fetch('https://beykozbalikcisi.com/get_categories.php');
+        const response = await fetch(`${API_URL}/get_categories.php`);
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -35,7 +36,7 @@ function MobileHome() {
       const getProductsByCategory = async () => {
         try {
           const response = await fetch(
-            `https://beykozbalikcisi.com/get_products_by_category.php?category_id=${selectedCategory.id}`
+            `${API_URL}/get_products_by_category.php?category_id=${selectedCategory.id}`
           );
           const data = await response.json();
           if (data.status === "success") {
@@ -80,16 +81,18 @@ function MobileHome() {
             w={"10%"}
             h={"20%"}
             minW={"160px"}
-            backgroundColor={"#D1A67C"}
+            backgroundColor={"#282D30"}
             borderRadius={10}
             p={3}
           >
             <Image
               alt="category-image"
-              src={`https://beykozbalikcisi.com/${item?.photo}`}
+              src={`${API_URL}/${item?.photo}`}
               w={"100%"}
-              h={"100%"}
+              h={130}
               borderRadius={7}
+              objectFit={"fill"}
+
             />
             <Button
               m={3}

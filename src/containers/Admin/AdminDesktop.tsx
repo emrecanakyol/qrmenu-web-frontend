@@ -1,30 +1,54 @@
 "use client";
-import { Box, Flex, Text, Input, Button, FormControl, FormLabel, Image, Select } from "@chakra-ui/react";
+import { API_URL } from "@/api/constants";
+import { CloseIcon } from "@chakra-ui/icons";
+import { Box, Flex, Text, Input, Button, FormControl, FormLabel, Image, Select, Heading, VStack, IconButton, useToast, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@chakra-ui/react";
 import { useState, ChangeEvent, useEffect } from "react";
 
 const AdminDesktop: React.FC = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [categoryName, setCategoryName] = useState<string>("");
   const [categoryPhoto, setCategoryPhoto] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [productName, setProductName] = useState<string>("");
   const [productPrice, setProductPrice] = useState<number | string>("");
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  const [productToDelete, setProductToDelete] = useState<number | null>(null);
 
   // Veritabanından kategorileri çekmek için useEffect kullanıyoruz
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("https://beykozbalikcisi.com/get_categories.php");
-        const data = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.error("Kategoriler yüklenemedi:", error);
-      }
-    };
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${API_URL}/get_categories.php`);
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error("Kategoriler yüklenemedi:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchCategories();
   }, []);
+
+  // Seçilen kategoriye ait ürünleri yüklemek için
+  const fetchProducts = async () => {
+    if (selectedCategory !== null) {
+      try {
+        const response = await fetch(`${API_URL}/get_products.php?category_id=${selectedCategory}`);
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Ürünler yüklenemedi:", error);
+      }
+    };
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategory]);
 
   const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -45,16 +69,16 @@ const AdminDesktop: React.FC = () => {
     formData.append("category_photo", categoryPhoto);
 
     try {
-      const response = await fetch("https://beykozbalikcisi.com/add_category.php", {
+      const response = await fetch(`${API_URL}/add_category.php`, {
         method: "POST",
         body: formData,
       });
       const result = await response.json();
       if (result.status === "success") {
-        alert("Kategori başarıyla eklendi!");
         setCategoryName("");
         setCategoryPhoto(null);
         setPreviewUrl(null);
+        fetchCategories();
       } else {
         alert(result.message);
       }
@@ -62,7 +86,6 @@ const AdminDesktop: React.FC = () => {
       console.error("Kategori eklenirken hata oluştu:", error);
     }
   };
-
 
   const handleProductSubmit = async () => {
     if (selectedCategoryId === null || !productName || !productPrice) {
@@ -76,13 +99,12 @@ const AdminDesktop: React.FC = () => {
     formData.append("product_price", productPrice.toString());
 
     try {
-      const response = await fetch("https://beykozbalikcisi.com/add_product.php", {
+      const response = await fetch(`${API_URL}/add_product.php`, {
         method: "POST",
         body: formData,
       });
       const result = await response.json();
       if (result.status === "success") {
-        alert("Ürün başarıyla eklendi!");
         setProductName("");
         setProductPrice("");
       } else {
@@ -91,6 +113,60 @@ const AdminDesktop: React.FC = () => {
     } catch (error) {
       console.error("Ürün eklenirken hata oluştu:", error);
     }
+  };
+
+  // Silme işlemi için onay modal'ını açma
+  const deleteCategory = (categoryId: number) => {
+    setCategoryToDelete(categoryId);
+    onOpen();
+  };
+  const deleteProduct = (productId: number) => {
+    setProductToDelete(productId);
+    onOpen();
+  };
+
+  const confirmDelete = async () => {
+    if (categoryToDelete !== null) {
+      try {
+        const response = await fetch(`${API_URL}/delete_category.php`, {
+          method: 'POST',
+          body: new URLSearchParams({
+            category_id: categoryToDelete.toString()
+          })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          setCategories(categories.filter(category => category.id !== categoryToDelete));
+        } else {
+          alert(`Hata: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Kategori silinirken hata oluştu:', error);
+        alert('Bir hata oluştu.');
+      }
+    } else if (productToDelete !== null) {
+      try {
+        const response = await fetch(`${API_URL}/delete_product.php`, {
+          method: 'POST',
+          body: new URLSearchParams({
+            product_id: productToDelete.toString() // Burada doğru parametreyi gönderdiğinizden emin olun
+          })
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          setProducts(products.filter(product => product.id !== productToDelete));
+        } else {
+          alert(`Hata: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Ürün silinirken hata oluştu:', error);
+        alert('Bir hata oluştu.');
+      }
+    }
+    setCategoryToDelete(null);
+    setProductToDelete(null);
+    onClose();
   };
 
 
@@ -109,9 +185,9 @@ const AdminDesktop: React.FC = () => {
         padding="54px"
         w="100%"
       >
-        <Text fontSize="2xl" mb="8" fontWeight="bold">
-          Yeni Kategori Ekle
-        </Text>
+        <Heading fontSize="24px" color="teal.500" mb={5}>
+          YENİ KATEGORİ EKLE
+        </Heading>
         <FormControl id="category-name" mb="4">
           <FormLabel display={"flex"}>Kategori Adı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
           <Input
@@ -145,9 +221,9 @@ const AdminDesktop: React.FC = () => {
           Kategoriyi Ekle
         </Button>
 
-        <Text fontSize="2xl" mt="50px" mb="8" fontWeight="bold">
-          Yeni Ürün Ekle
-        </Text>
+        <Heading fontSize="24px" color="teal.500" mt={50} mb={5}>
+          YENİ ÜRÜN EKLE
+        </Heading>
 
         <FormControl id="select-category" mb="4">
           <FormLabel display={"flex"}>Kategori Seçin<Text color={"red"} fontSize={15}>*</Text></FormLabel>
@@ -183,9 +259,117 @@ const AdminDesktop: React.FC = () => {
           />
         </FormControl>
 
-        <Button colorScheme="green" onClick={handleProductSubmit} w={150}>
+        <Button colorScheme="blue" onClick={handleProductSubmit} w={150}>
           Ürünü Ekle
         </Button>
+
+        {categories.length > 0 && (
+          <VStack align="start" spacing={4} mt={100}>
+            <Heading fontSize="24px" color="teal.500">KATEGORİ LİSTESİ</Heading>
+            {categories.map((category) => (
+              <Box
+                key={category.id}
+                p={4}
+                borderWidth={1}
+                borderRadius="md"
+                width="100%"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                bg="white"
+                boxShadow="sm"
+              >
+                <Text fontSize="16px">{category.name}</Text>
+                <IconButton
+                  icon={<CloseIcon />}
+                  colorScheme="red"
+                  aria-label="Kategori sil"
+                  onClick={() => {
+                    deleteCategory(category.id);
+                  }}
+                />
+              </Box>
+            ))}
+          </VStack>
+        )}
+
+
+        <Heading fontSize={"24px"} mt={8} color="teal.500">ÜRÜN LİSTESİ</Heading>
+        <Select
+          placeholder="Kategori Seçin"
+          value={selectedCategory ?? ''}
+          onChange={(e) => setSelectedCategory(Number(e.target.value))}
+          mt={4}
+          bg="white"
+          borderColor="gray.300"
+          borderRadius="md"
+          boxShadow="sm"
+          _hover={{ borderColor: "teal.500" }}
+        >
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
+        {selectedCategory ? (
+          <Box mt={4}>
+            {products.length > 0 ? (
+              <VStack spacing={4}>
+                {products.map((product) => (
+                  <Box
+                    key={product.id}
+                    p={4}
+                    borderWidth={1}
+                    borderRadius="md"
+                    width="100%"
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    bg="white"
+                    boxShadow="sm"
+                  >
+                    <Text fontSize="16px" width={"33%"}>{product.product_name}</Text>
+                    <Text fontSize="16px" fontWeight="bold" width={"33%"}>{product.product_price} ₺</Text>
+
+                    <IconButton
+                      icon={<CloseIcon />}
+                      colorScheme="red"
+                      aria-label="Ürün sil"
+                      onClick={() => {
+                        deleteProduct(product.id);
+                      }}
+                    />
+                  </Box>
+                ))}
+              </VStack>
+            ) : (
+              <Text mt={4}>Bu kategoriye ait ürün bulunmamaktadır.</Text>
+            )}
+          </Box>
+        ) : (
+          <Text mt={4}>Bir kategori seçin.</Text>
+        )}
+
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Silme Onayı</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text>Bu işlemi geri alamazsınız. Silmek istediğinizden emin misiniz?</Text>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="red" mr={3} onClick={confirmDelete}>
+                Sil
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                İptal
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
       </Box>
     </Flex>
   );
