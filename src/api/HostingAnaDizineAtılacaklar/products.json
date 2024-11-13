@@ -1,0 +1,195 @@
+{
+  "categories": [
+    {
+      "name": "Kahveler",
+      "photoUrl": "/categories/kahveler.webp",
+      "products": [
+        { "name": "Espresso", "price": "70 ₺" },
+        { "name": "Double Espresso", "price": "85 ₺" },
+        { "name": "Americano", "price": "100 ₺" },
+        { "name": "Flat White", "price": "120 ₺" },
+        { "name": "Caffe Latte", "price": "120 ₺" },
+        { "name": "Latte (vanilya, fındık, karamel)", "price": "135 ₺" },
+        { "name": "Antep Fıstıklı Latte", "price": "170 ₺" },
+        { "name": "Cappuccino", "price": "110 ₺" },
+        { "name": "Caramel Macchiato", "price": "130 ₺" },
+        { "name": "Caffe Mocha", "price": "130 ₺" },
+        { "name": "White Chocolate Mocha", "price": "140 ₺" },
+        { "name": "Cortado", "price": "80 ₺" },
+        { "name": "Filtre Kahve", "price": "100 ₺" },
+        { "name": "Sütlü Filtre Kahve (misto)", "price": "115 ₺" },
+        { "name": "Pumpkin Spice Latte", "price": "135 ₺" },
+        { "name": "Pembe Panter", "price": "160 ₺" }
+      ]
+    },
+    {
+      "name": "Soğuk Kahveler",
+      "photoUrl": "/categories/soguk-kahveler.webp",
+      "products": [
+        { "name": "Ice Americano", "price": "100 ₺" },
+        { "name": "Ice Cappuccino", "price": "110 ₺" },
+        { "name": "Ice Caramel Macchiato", "price": "130 ₺" },
+        { "name": "Ice Latte", "price": "120 ₺" },
+        { "name": "Ice Latte (vanilya, fındık, karamel)", "price": "135 ₺" },
+        { "name": "Ice Fıstıklı Latte", "price": "170 ₺" },
+        { "name": "Ice Caffe Mocha", "price": "130 ₺" },
+        { "name": "Ice White Chocolate Mocha", "price": "140 ₺" },
+        { "name": "Ice Filtre Kahve", "price": "120 ₺" },
+        { "name": "Ice Pumpkin Spice Latte", "price": "135 ₺" },
+        { "name": "Pembe Panter", "price": "160 ₺" }
+      ]
+    },
+    {
+      "name": "Frozen",
+      "photoUrl": "/categories/frozen.webp",
+      "products": [
+        { "name": "Mango Frozen", "price": "130 ₺" },
+        { "name": "Passion Fruit Frozen", "price": "130 ₺" },
+        { "name": "Peach Frozen", "price": "130 ₺" },
+        { "name": "Strawberry Frozen", "price": "130 ₺" }
+      ]
+    },
+    {
+      "name": "Sıcak İcecekler",
+      "photoUrl": "/categories/sicak-icecekler.webp",
+      "products": [
+        { "name": "cay", "price": "25 ₺" },
+        {
+          "name": "Bitki cayları (papatya, yeşil cay, adacayı, kulburnu, slim plus)",
+          "price": "45 ₺"
+        },
+        { "name": "Demleme Ihlamur", "price": "65 ₺", "ekstra": "bal +15 ₺" },
+        { "name": "Sıcak cikolata", "price": "110 ₺" },
+        { "name": "Beyaz Sıcak cikolata", "price": "120 ₺" },
+        { "name": "Sahlep", "price": "120 ₺" },
+        { "name": "Türk Kahvesi", "price": "60 ₺" },
+        { "name": "Double Türk Kahvesi", "price": "100 ₺" },
+        { "name": "Ballı Muzlu Süt", "price": "150 ₺" },
+        { "name": "Ballı Atom", "price": "170 ₺" },
+        { "name": "Detoks Suyu", "price": "110 ₺" }
+      ]
+    },
+    {
+      "name": "Milkshake",
+      "photoUrl": "/categories/milkshake.webp",
+      "products": [
+        { "name": "Vanilyalı Milkshake", "price": "150 ₺" },
+        { "name": "Kakaolu Milkshake", "price": "150 ₺" },
+        { "name": "cilekli Milkshake", "price": "150 ₺" }
+      ]
+    },
+    {
+      "name": "Smoothie",
+      "photoUrl": "/categories/smoothie.webp",
+      "products": [
+        { "name": "Muzlu Smoothie", "price": "160 ₺" },
+        { "name": "Fit Smoothie", "price": "160 ₺" }
+      ]
+    },
+    {
+      "name": "Fresh İcecekler",
+      "photoUrl": "/categories/fresh-icecekler.webp",
+      "products": [
+        { "name": "Orange Mango", "price": "140 ₺" },
+        { "name": "Cool Lime", "price": "130 ₺" },
+        { "name": "Red Flag", "price": "130 ₺" },
+        { "name": "Fresh Fusion", "price": "130 ₺" }
+      ]
+    },
+    {
+      "name": "Şişe İcecekler",
+      "photoUrl": "/categories/sise-icecekler.webp",
+      "products": [
+        { "name": "Coca Cola", "price": "50 ₺" },
+        { "name": "Coca Cola Zero", "price": "50 ₺" },
+        { "name": "Fanta", "price": "50 ₺" },
+        { "name": "Sprite", "price": "50 ₺" },
+        { "name": "Redbull", "price": "80 ₺" },
+        { "name": "Büyük Boy Redbull", "price": "110 ₺" },
+        { "name": "Black Burn", "price": "55 ₺" },
+        { "name": "Sade Soda", "price": "30 ₺" },
+        { "name": "Meyveli Soda", "price": "35 ₺" },
+        { "name": "Churchill", "price": "70 ₺" },
+        { "name": "Ayran", "price": "35 ₺" },
+        { "name": "Su", "price": "20 ₺" }
+      ]
+    },
+    {
+      "name": "Tatlılar",
+      "photoUrl": "/categories/tatlilar.webp",
+      "products": [
+        { "name": "Nutellalı Waffle", "price": "210 ₺" },
+        { "name": "Meyveli Waffle", "price": "235 ₺" },
+        { "name": "Dondurmalı Meyveli Waffle", "price": "260 ₺" },
+        { "name": "Dilim Pasta", "price": "70 ₺" }
+      ]
+    },
+    {
+      "name": "Tavuklar",
+      "photoUrl": "/categories/tavuk.webp",
+      "products": [
+        { "name": "Tavuklu Pilav", "price": "180 ₺" },
+        { "name": "Tavuklu Pilav + Salata", "price": "200 ₺" },
+        { "name": "Kremalı Mantarlı Tavuk", "price": "300 ₺" },
+        { "name": "Köri Soslu Kremalı Tavuk", "price": "300 ₺" }
+      ]
+    },
+        {
+      "name": "Pizzalar",
+      "photoUrl": "/categories/pizza.webp",
+      "products": [
+        { "name": "Pizza Margarita", "price": "325 ₺" },
+        { "name": "Pizza Mix", "price": "375 ₺" },
+        { "name": "Pizza Vegetable", "price": "325 ₺" },
+        { "name": "Pizza Chicken", "price": "350 ₺" }
+      ]
+    },
+    {
+      "name": "Hamburgerler",
+      "photoUrl": "/categories/hamburger.webp",
+      "products": [
+        { "name": "Van Gogh Burger", "price": "380 ₺" },
+        { "name": "Hamburger", "price": "325 ₺" },
+        { "name": "Cheeseburger", "price": "350 ₺" },
+        { "name": "Double Burger", "price": "465 ₺" }
+      ]
+    },
+    {
+      "name": "Makarnalar",
+      "photoUrl": "/categories/makarna.webp",
+      "products": [
+        { "name": "Fettucine Alfredo", "price": "300 ₺" },
+        { "name": "Bolonez Soslu Makarna", "price": "325 ₺" },
+        { "name": "Peynirli Makarna", "price": "250 ₺" },
+        { "name": "Sebzeli Makarna", "price": "250 ₺" }
+      ]
+    },
+    {
+      "name": "Tostlar",
+      "photoUrl": "/categories/tost.webp",
+      "products": [
+        { "name": "Sucuklu Tost", "price": "150 ₺" },
+        { "name": "Kaşarlı Tost", "price": "150 ₺" },
+        { "name": "Karışık Tost", "price": "200 ₺" }
+      ]
+    },
+    {
+      "name": "Sandvicler",
+      "photoUrl": "/categories/sandvic.webp",
+      "products": [
+        { "name": "Soğuk Sandviç", "price": "125 ₺" },
+        { "name": "Ton Balıklı Sandviç", "price": "150 ₺" },
+        { "name": "Çıtır Tavuklu Sandviç", "price": "175 ₺" }
+    ]
+    },
+    {
+      "name": "Salatalar",
+      "photoUrl": "/categories/salatalar.webp",
+      "products": [
+        { "name": "Akdeniz Salata", "price": "170 ₺" },
+        { "name": "Ton Balıklı Salata", "price": "210 ₺" },
+        { "name": "cıtır Tavuklu Salata", "price": "225 ₺" }
+      ]
+    }
+  ]
+}
