@@ -16,12 +16,35 @@ function MobileHome() {
   const [categories, setCategories] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
 
+  const [sliders, setSliders] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchSliders = async () => {
+      try {
+        const response = await fetch(`${API_URL}/get_sliders.php`);
+        const data = await response.json();
+        if (data.status === "success") {
+          setSliders(data.sliders);
+        } else {
+          console.error('Sliderlar yüklenemedi');
+        }
+      } catch (error) {
+        console.error("Veri alınırken hata oluştu:", error);
+      }
+    };
+
+    fetchSliders();
+  }, []);
+
   useEffect(() => {
     const getProducts = async () => {
       try {
         const response = await fetch(`${API_URL}/get_categories.php`);
         const data = await response.json();
         setCategories(data);
+        if (data.length > 0) {
+          setSelectedCategory(data[0]); // İlk kategoriyi seçiyoruz
+        }
       } catch (error) {
         console.error('Veriler yüklenemedi:', error);
       }
@@ -40,7 +63,7 @@ function MobileHome() {
           );
           const data = await response.json();
           if (data.status === "success") {
-            setProducts(data.products);  // Ürünleri state'e ekle
+            setProducts(data.products);
           } else {
             setProducts([]);  // Eğer ürün yoksa boş liste
           }
@@ -54,7 +77,16 @@ function MobileHome() {
 
   return (
     <>
-      <Image alt="slider" src="/sliderMobile.webp" w={"100%"} h={"100%"} />
+      {sliders.length > 0 && (
+        <Image
+          key={sliders[0].id}
+          src={`${API_URL}/${sliders[0].photo}`}
+          alt="Slider"
+          w="100%"
+          h="250px"
+          objectFit={"cover"}
+        />
+      )}
 
       <VStack
         mt={30}

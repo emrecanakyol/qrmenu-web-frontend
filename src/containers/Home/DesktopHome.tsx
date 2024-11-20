@@ -24,6 +24,25 @@ function DesktopHome() {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [categories, setCategories] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
+  const [sliders, setSliders] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchSliders = async () => {
+      try {
+        const response = await fetch(`${API_URL}/get_sliders.php`);
+        const data = await response.json();
+        if (data.status === "success") {
+          setSliders(data.sliders.reverse());
+        } else {
+          console.error('Sliderlar yüklenemedi');
+        }
+      } catch (error) {
+        console.error("Veri alınırken hata oluştu:", error);
+      }
+    };
+
+    fetchSliders();
+  }, []);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -67,8 +86,15 @@ function DesktopHome() {
 
   return (
     <>
-      {isXXL && (
-        <Image alt="slider" src="/sliderDesktop.webp" w={"100%"} h={"100%"} />
+      {sliders.length > 0 && (
+        <Image
+          key={sliders[0].id}
+          src={`${API_URL}/${sliders[0]?.photo}`}
+          alt="Slider"
+          w="100%"
+          h="700px"
+          objectFit={"cover"}
+        />
       )}
       <Flex
         align={"center"}

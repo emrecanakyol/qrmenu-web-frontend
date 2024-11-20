@@ -17,6 +17,65 @@ const AdminMobile: React.FC = () => {
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
   const [productToDelete, setProductToDelete] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [sliderPhoto, setSliderPhoto] = useState<File | null>(null);
+  const [sliderPreviewUrl, setSliderPreviewUrl] = useState<string | null>(null);
+  const [photoSliderPreviewUrl, setPhotoSliderPreviewUrl] = useState<string | null>(null);
+  const [sliderId, setSliderId] = useState<number | null>(null);
+
+
+  // Slider fotoğrafını yüklemek için handlePhotoChange fonksiyonu
+  const handleSliderPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSliderPhoto(file);
+      setPhotoSliderPreviewUrl(URL.createObjectURL(file));
+      // setSliderPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  // Slider fotoğrafını eklemek için API'ye veri gönderme fonksiyonu
+  const handleSliderSubmit = async () => {
+    if (!sliderPhoto) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("slider_photo", sliderPhoto);
+
+    try {
+      const response = await fetch(`${API_URL}/add_slider.php`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      alert("Slider Fotoğrafı başarıyla değiştirildi.")
+    } catch (error) {
+      console.error("Slider eklenirken bir hata oluştu:", error);
+    }
+  };
+
+  // Mevcut slider'ı veritabanından çekmek için fetchSlider fonksiyonu
+  const fetchSlider = async () => {
+    try {
+      const response = await fetch(`${API_URL}/get_sliders.php`);
+      const data = await response.json();
+      if (data.status === "success" && data.sliders.length > 0) {
+        const slider = data.sliders[0]; // Sadece bir slider var
+        setSliderId(slider.id);
+        setSliderPreviewUrl(slider.photo);
+      } else {
+        setSliderId(null);
+        setSliderPreviewUrl(null);
+      }
+    } catch (error) {
+      console.error("Slider fotoğrafı yüklenemedi:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSlider(); // Component mount olduğunda slider'ı çek
+  }, []);
+
 
 
   // Veritabanından kategorileri çekmek için useEffect kullanıyoruz
@@ -76,6 +135,7 @@ const AdminMobile: React.FC = () => {
       });
       const result = await response.json();
       if (result.status === "success") {
+        alert("Kategori başarıyla eklenmiştir.");
         setCategoryName("");
         setCategoryPhoto(null);
         setPreviewUrl(null);
@@ -106,8 +166,10 @@ const AdminMobile: React.FC = () => {
       });
       const result = await response.json();
       if (result.status === "success") {
+        alert("Ürün başarıyla eklenmiştir.");
         setProductName("");
         setProductPrice("");
+        fetchProducts();
       } else {
         alert(result.message);
       }
@@ -169,7 +231,6 @@ const AdminMobile: React.FC = () => {
     setProductToDelete(null);
     onClose();
   };
-
 
   return (
     <Box w="100%" pr={"12px"} pl={"12px"} bgColor={"#fff"}>
@@ -368,6 +429,23 @@ const AdminMobile: React.FC = () => {
           ) : (
             <Text mt={4}>Bir kategori seçin.</Text>
           )}
+
+          <VStack spacing={8} align="start" mt={100} >
+
+            <Box>
+              <FormControl id="slider-photo" mb={4}>
+                <Heading fontSize={"22px"} mb={10} color="teal.500">SLIDER FOTOĞRAFI</Heading>
+
+                <Image src={photoSliderPreviewUrl ? photoSliderPreviewUrl : `${API_URL}/${sliderPreviewUrl}`} alt="Slider Preview" boxSize="150px" objectFit="cover" borderRadius="md" mb={4} />
+
+                <Input type="file" accept="image/*" p={1} onChange={handleSliderPhotoChange} />
+              </FormControl>
+
+              <Button colorScheme="teal" onClick={handleSliderSubmit} w={"100%"}>
+                {sliderId ? "Slider Fotoğrafını Güncelle" : "Slider Fotoğrafı Ekle"}
+              </Button>
+            </Box>
+          </VStack>
 
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
