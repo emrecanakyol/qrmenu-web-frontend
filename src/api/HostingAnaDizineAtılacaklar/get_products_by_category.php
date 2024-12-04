@@ -15,11 +15,31 @@ $query = "SELECT * FROM products WHERE category_id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $category_id);
 
+// Eğer sorgu çalıştıysa
 if ($stmt->execute()) {
-    $result = $stmt->get_result();
-    $products = $result->fetch_all(MYSQLI_ASSOC);
+    // Sorgu sonucu için bind_result() kullanıyoruz
+    $stmt->store_result(); // Sonuçları belleğe alıyoruz
+
+    // Sonuçları almak için bind_result() kullanıyoruz
+    $stmt->bind_result($id, $category_id, $product_name, $product_price);
+
+    $products = array();
+
+    // Sonuçları tek tek alıyoruz
+    while ($stmt->fetch()) {
+        // Her bir ürünü bir diziye ekliyoruz
+        $products[] = array(
+            'id' => $id,
+            'product_name' => $product_name,
+            'product_price' => $product_price,
+            'category_id' => $category_id
+        );
+    }
+
+    // JSON formatında başarıyla dönüyoruz
     echo json_encode(['status' => 'success', 'products' => $products]);
 } else {
+    // Sorgu başarısız olduysa hata mesajı döndürüyoruz
     echo json_encode(['status' => 'error', 'message' => 'Ürünler alınırken bir hata oluştu.']);
 }
 

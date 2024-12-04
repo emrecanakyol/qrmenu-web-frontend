@@ -80,7 +80,7 @@ function MobileHome() {
       {sliders.length > 0 && (
         <Image
           key={sliders[0].id}
-          src={`${API_URL}/${sliders[0].photo}`}
+          src={`${API_URL}/${sliders[sliders.length - 1].photo}`}
           alt="Slider"
           w="100%"
           h="250px"
@@ -113,7 +113,7 @@ function MobileHome() {
             w={"10%"}
             h={"20%"}
             minW={"160px"}
-            backgroundColor={"#282D30"}
+            backgroundColor={"#FFC801"}
             borderRadius={10}
             p={3}
           >
@@ -139,12 +139,12 @@ function MobileHome() {
               _hover={{
                 borderColor: "#282D31",
                 backgroundColor: "#282D31",
-                color: "white",
+                color: "#fff",
               }}
               _active={{
                 borderColor: "#282D31",
                 backgroundColor: "#282D31",
-                color: "white",
+                color: "#fff",
               }}
               _focus={{ boxShadow: "none" }}
             >

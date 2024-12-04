@@ -70,14 +70,14 @@ function HeaderDesktop({ router }: Props) {
                 İletişim
               </MenuButton>
             </Menu>
-            {/* <NextLink href={"/account"}> */}
-            <Image
-              alt="account"
-              src="/account-white.png"
-              w={"20px"}
-              h={"20px"}
-            />
-            {/* </NextLink> */}
+            <NextLink href={"/admin"}>
+              <Image
+                alt="account"
+                src="/account-white.png"
+                w={"20px"}
+                h={"20px"}
+              />
+            </NextLink>
           </Flex>
         </Flex>
       </Flex>

@@ -6,7 +6,7 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Beykoz Balıkçısı",
+  title: "Kılıç Kanat",
   description: "Qr Menü",
 };
 
@@ -18,8 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} style={{
-        // backgroundColor: "#F6EEE4" 
-        backgroundColor: "#D7EEFF"
+        backgroundColor: "#FEEEDE"
       }}>
         <ChakraProvider>{children}</ChakraProvider>
       </body>

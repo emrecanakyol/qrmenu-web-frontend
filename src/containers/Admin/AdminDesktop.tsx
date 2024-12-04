@@ -3,8 +3,10 @@ import { API_URL } from "@/api/constants";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Flex, Text, Input, Button, FormControl, FormLabel, Image, Select, Heading, VStack, IconButton, useToast, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@chakra-ui/react";
 import { useState, ChangeEvent, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const AdminDesktop: React.FC = () => {
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [categoryName, setCategoryName] = useState<string>("");
   const [categoryPhoto, setCategoryPhoto] = useState<File | null>(null);
@@ -21,7 +23,7 @@ const AdminDesktop: React.FC = () => {
   const [sliderPreviewUrl, setSliderPreviewUrl] = useState<string | null>(null);
   const [photoSliderPreviewUrl, setPhotoSliderPreviewUrl] = useState<string | null>(null);
   const [sliderId, setSliderId] = useState<number | null>(null);
-
+  const [activeMenu, setActiveMenu] = useState<string>("categories");
 
   // Slider fotoğrafını yüklemek için handlePhotoChange fonksiyonu
   const handleSliderPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,9 +61,9 @@ const AdminDesktop: React.FC = () => {
       const response = await fetch(`${API_URL}/get_sliders.php`);
       const data = await response.json();
       if (data.status === "success" && data.sliders.length > 0) {
-        const slider = data.sliders[0]; // Sadece bir slider var
-        setSliderId(slider.id);
-        setSliderPreviewUrl(slider.photo);
+        const lastSlider = data.sliders[data.sliders.length - 1];
+        setSliderId(lastSlider.id);
+        setSliderPreviewUrl(lastSlider.photo);
       } else {
         setSliderId(null);
         setSliderPreviewUrl(null);
@@ -70,11 +72,6 @@ const AdminDesktop: React.FC = () => {
       console.error("Slider fotoğrafı yüklenemedi:", error);
     }
   };
-
-  useEffect(() => {
-    fetchSlider(); // Component mount olduğunda slider'ı çek
-  }, []);
-
 
   // Veritabanından kategorileri çekmek için useEffect kullanıyoruz
   const fetchCategories = async () => {
@@ -88,6 +85,7 @@ const AdminDesktop: React.FC = () => {
   };
 
   useEffect(() => {
+    fetchSlider();
     fetchCategories();
   }, []);
 
@@ -230,155 +228,124 @@ const AdminDesktop: React.FC = () => {
     onClose();
   };
 
+  const handleMenuClick = (menu: string) => {
+    setActiveMenu(menu);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_URL}/logout.php`);
+      // Çıkış yaptıktan sonra login sayfasına yönlendir
+      router.push("/login");
+    } catch (error) {
+      console.error("Çıkış yapılırken hata oluştu", error);
+    }
+  };
+
+
   return (
-    <Flex
-      align="center"
-      width={{ base: "100%", xl: "1440px" }}
-      px={{ base: "16px", md: "72px", xl: "165px" }}
-      margin="auto"
-      marginTop="100px"
-      marginBottom="100px"
-    >
+    <Flex>
+      <Box
+        bg="teal.500"
+        as="nav"
+        color="white"
+        width="290px"
+        minHeight="100vh"
+        p={4}
+        display={{ base: "none", md: "block" }}
+      >
+        <Heading fontSize="24px" mb={6} mt={10}>ADMIN PANELİ</Heading>
+        <VStack align="start" spacing={4}>
+          <Button
+            variant="link"
+            color="white"
+            fontSize="18px"
+            onClick={() => handleMenuClick("categories")}
+          >
+            Kategoriler
+          </Button>
+          <Button
+            variant="link"
+            color="white"
+            fontSize="18px"
+            onClick={() => handleMenuClick("products")}
+          >
+            Ürünler
+          </Button>
+          <Button
+            variant="link"
+            color="white"
+            fontSize="18px"
+            onClick={() => handleMenuClick("sliders")}
+          >
+            Slider
+          </Button>
+        </VStack>
+        <VStack>
+          <Button
+            variant="link"
+            color="white"
+            fontSize="18px"
+            onClick={handleLogout}
+            mt={10}
+          >
+            Çıkış Yap
+          </Button>
+        </VStack>
+      </Box>
+
+
+
       <Box
         borderRadius="md"
         backgroundColor="#fff"
         padding="54px"
         w="100%"
       >
-        <Heading fontSize="24px" color="teal.500" mb={5}>
-          YENİ KATEGORİ EKLE
-        </Heading>
-        <FormControl id="category-name" mb="4">
-          <FormLabel display={"flex"}>Kategori Adı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
-          <Input
-            placeholder="Kategori adını girin"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.target.value)}
-          />
-        </FormControl>
-        <FormControl id="category-photo" mb="4">
-          <FormLabel display={"flex"}>Kategori Fotoğrafı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
-          {previewUrl && (
-            <Image
-              src={previewUrl}
-              alt="Category Preview"
-              boxSize="100px"
-              objectFit="cover"
-              borderRadius="md"
-              mt={15}
-              mb={15}
-            />
-          )}
-          <Input
-            id="category-photo"
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            p={1}
-          />
-        </FormControl>
-        <Button colorScheme="blue" onClick={handleCategorySubmit} w={150}>
-          Kategoriyi Ekle
-        </Button>
-
-        <Heading fontSize="24px" color="teal.500" mt={50} mb={5}>
-          YENİ ÜRÜN EKLE
-        </Heading>
-
-        <FormControl id="select-category" mb="4">
-          <FormLabel display={"flex"}>Kategori Seçin<Text color={"red"} fontSize={15}>*</Text></FormLabel>
-          <Select
-            placeholder="Bir kategori seçin"
-            value={selectedCategoryId ?? ""}
-            onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
-          >
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl id="product-name" mb="4">
-          <FormLabel display={"flex"}>Ürün Adı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
-          <Input
-            placeholder="Ürün adını girin"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-          />
-        </FormControl>
-
-        <FormControl id="product-price" mb="4">
-          <FormLabel display={"flex"}>Ürün Fiyatı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
-          <Input
-            type="number"
-            placeholder="Ürün fiyatını girin"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
-          />
-        </FormControl>
-
-        <Button colorScheme="blue" onClick={handleProductSubmit} w={150}>
-          Ürünü Ekle
-        </Button>
-
-        {categories.length > 0 && (
-          <VStack align="start" spacing={4} mt={100}>
-            <Heading fontSize="24px" color="teal.500">KATEGORİ LİSTESİ</Heading>
-            {categories.map((category) => (
-              <Box
-                key={category.id}
-                p={4}
-                borderWidth={1}
-                borderRadius="md"
-                width="100%"
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                bg="white"
-                boxShadow="sm"
-              >
-                <Text fontSize="16px">{category.name}</Text>
-                <IconButton
-                  icon={<CloseIcon />}
-                  colorScheme="red"
-                  aria-label="Kategori sil"
-                  onClick={() => {
-                    deleteCategory(category.id);
-                  }}
+        {activeMenu === "categories" && (
+          <>
+            <Heading fontSize="24px" color="teal.500" mb={8}>
+              YENİ KATEGORİ EKLE
+            </Heading>
+            <FormControl id="category-name" mb="4">
+              <FormLabel display={"flex"}>Kategori Adı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+              <Input
+                placeholder="Kategori adını girin"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+              />
+            </FormControl>
+            <FormControl id="category-photo" mb="4">
+              <FormLabel display={"flex"}>Kategori Fotoğrafı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+              {previewUrl && (
+                <Image
+                  src={previewUrl}
+                  alt="Category Preview"
+                  boxSize="100px"
+                  objectFit="cover"
+                  borderRadius="md"
+                  mt={15}
+                  mb={15}
                 />
-              </Box>
-            ))}
-          </VStack>
-        )}
+              )}
+              <Input
+                id="category-photo"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                p={1}
+              />
+            </FormControl>
+            <Button colorScheme="blue" onClick={handleCategorySubmit} w={150}>
+              Kategoriyi Ekle
+            </Button>
 
-
-        <Heading fontSize={"24px"} mt={8} color="teal.500">ÜRÜN LİSTESİ</Heading>
-        <Select
-          placeholder="Kategori Seçin"
-          value={selectedCategory ?? ''}
-          onChange={(e) => setSelectedCategory(Number(e.target.value))}
-          mt={4}
-          bg="white"
-          borderColor="gray.300"
-          borderRadius="md"
-          boxShadow="sm"
-          _hover={{ borderColor: "teal.500" }}
-        >
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </Select>
-        {selectedCategory ? (
-          <Box mt={4}>
-            {products.length > 0 ? (
-              <VStack spacing={4}>
-                {products.map((product) => (
+            {categories.length > 0 && (
+              <VStack align="start" spacing={4} mt={100}>
+                <Heading fontSize="24px" color="teal.500">KATEGORİ LİSTESİ</Heading>
+                {categories.map((category) => (
                   <Box
-                    key={product.id}
+                    key={category.id}
                     p={4}
                     borderWidth={1}
                     borderRadius="md"
@@ -389,47 +356,149 @@ const AdminDesktop: React.FC = () => {
                     bg="white"
                     boxShadow="sm"
                   >
-                    <Text fontSize="16px" width={"33%"}>{product.product_name}</Text>
-                    <Text fontSize="16px" fontWeight="bold" width={"33%"}>{product.product_price} ₺</Text>
-
+                    <Text fontSize="16px">{category.name}</Text>
                     <IconButton
                       icon={<CloseIcon />}
                       colorScheme="red"
-                      aria-label="Ürün sil"
+                      aria-label="Kategori sil"
                       onClick={() => {
-                        deleteProduct(product.id);
+                        deleteCategory(category.id);
                       }}
                     />
                   </Box>
                 ))}
               </VStack>
-            ) : (
-              <Text mt={4}>Bu kategoriye ait ürün bulunmamaktadır.</Text>
             )}
-          </Box>
-        ) : (
-          <Text mt={4}>Bir kategori seçin.</Text>
+          </>
         )}
 
 
+        {activeMenu === "products" && (
+          <>
+            <Heading fontSize="24px" color="teal.500" mb={8}>
+              YENİ ÜRÜN EKLE
+            </Heading>
 
-        <VStack spacing={8} align="start" mt={100} >
-
-          <Box>
-            <FormControl id="slider-photo" mb={4}>
-              <Heading fontSize={"24px"} mb={10} color="teal.500">SLIDER FOTOĞRAFI</Heading>
-
-              <Image src={photoSliderPreviewUrl ? photoSliderPreviewUrl : `${API_URL}/${sliderPreviewUrl}`} alt="Slider Preview" boxSize="150px" objectFit="cover" borderRadius="md" mb={4} />
-
-              <Input type="file" accept="image/*" p={1} onChange={handleSliderPhotoChange} />
+            <FormControl id="select-category" mb="4">
+              <FormLabel display={"flex"}>Kategori Seçin<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+              <Select
+                placeholder="Bir kategori seçin"
+                value={selectedCategoryId ?? ""}
+                onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Select>
             </FormControl>
 
-            <Button colorScheme="teal" onClick={handleSliderSubmit}>
-              {sliderId ? "Slider Fotoğrafını Güncelle" : "Slider Fotoğrafı Ekle"}
-            </Button>
-          </Box>
-        </VStack>
+            <FormControl id="product-name" mb="4">
+              <FormLabel display={"flex"}>Ürün Adı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+              <Input
+                placeholder="Ürün adını girin"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+              />
+            </FormControl>
 
+            <FormControl id="product-price" mb="4">
+              <FormLabel display={"flex"}>Ürün Fiyatı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+              <Input
+                type="number"
+                placeholder="Ürün fiyatını girin"
+                value={productPrice}
+                onChange={(e) => setProductPrice(e.target.value)}
+              />
+            </FormControl>
+
+            <Button colorScheme="blue" onClick={handleProductSubmit} w={150}>
+              Ürünü Ekle
+            </Button>
+
+
+            <Heading fontSize={"24px"} mt={8} color="teal.500">ÜRÜN LİSTESİ</Heading>
+            <Select
+              placeholder="Kategori Seçin"
+              value={selectedCategory ?? ''}
+              onChange={(e) => setSelectedCategory(Number(e.target.value))}
+              mt={4}
+              bg="white"
+              borderColor="gray.300"
+              borderRadius="md"
+              boxShadow="sm"
+              _hover={{ borderColor: "teal.500" }}
+            >
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+            {selectedCategory ? (
+              <Box mt={4}>
+                {products.length > 0 ? (
+                  <VStack spacing={4}>
+                    {products.map((product) => (
+                      <Box
+                        key={product.id}
+                        p={4}
+                        borderWidth={1}
+                        borderRadius="md"
+                        width="100%"
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        bg="white"
+                        boxShadow="sm"
+                      >
+                        <Text fontSize="16px" width={"33%"}>{product.product_name}</Text>
+                        <Text fontSize="16px" fontWeight="bold" width={"33%"}>{product.product_price} ₺</Text>
+
+                        <IconButton
+                          icon={<CloseIcon />}
+                          colorScheme="red"
+                          aria-label="Ürün sil"
+                          onClick={() => {
+                            deleteProduct(product.id);
+                          }}
+                        />
+                      </Box>
+                    ))}
+                  </VStack>
+                ) : (
+                  <Text mt={4}>Bu kategoriye ait ürün bulunmamaktadır.</Text>
+                )}
+              </Box>
+            ) : (
+              <Text mt={4}>Bir kategori seçin.</Text>
+            )}
+
+          </>
+        )}
+
+
+        {activeMenu === "sliders" && (
+          <>
+            <VStack spacing={8} align="start">
+
+              <Box>
+                <FormControl id="slider-photo" mb={4}>
+                  <Heading fontSize={"24px"} mb={10} color="teal.500">SLIDER FOTOĞRAFI</Heading>
+
+                  <Image src={photoSliderPreviewUrl ? photoSliderPreviewUrl : `${API_URL}/${sliderPreviewUrl}`} alt="Slider Preview" boxSize="150px" objectFit="cover" borderRadius="md" mb={4} />
+
+                  <Input type="file" accept="image/*" p={1} onChange={handleSliderPhotoChange} />
+                </FormControl>
+
+                <Button colorScheme="teal" onClick={handleSliderSubmit}>
+                  {sliderId ? "Slider Fotoğrafını Güncelle" : "Slider Fotoğrafı Ekle"}
+                </Button>
+              </Box>
+            </VStack>
+          </>
+        )}
 
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />

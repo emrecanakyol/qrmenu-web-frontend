@@ -66,14 +66,14 @@ const ContactMobile = () => {
       >
         <Flex gap={2} alignItems={"center"}>
           <Image alt="tel" src="/tel-icon.png" w={"22px"} h={"22px"} />
-          <NextLink href="tel:+905338516158" passHref>
+          <NextLink href="tel:+902122993300" passHref>
             <Text color={"#282d31"} fontWeight={"400"} fontSize={"18px"}>
-              0 (533) 851 61 58
+              0 (212) 299 33 00
             </Text>
           </NextLink>
         </Flex>
 
-        <NextLink href="https://www.instagram.com/van.gogh.cafe.fastfood/">
+        <NextLink href="https://www.instagram.com/kilickanatsariyer/">
           <Flex
             gap={2}
             mt={{
@@ -86,7 +86,7 @@ const ContactMobile = () => {
           >
             <Image alt="instagram" src="/ins-icon.png" w={"20px"} h={"20px"} />
             <Text color={"#282d31"} fontWeight={"400"} fontSize={"18px"}>
-              @van.gogh.cafe.fastfood
+              @kilickanatsariyer
             </Text>
           </Flex>
         </NextLink>

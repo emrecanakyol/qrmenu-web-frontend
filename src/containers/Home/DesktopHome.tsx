@@ -13,51 +13,53 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 
+interface Slider {
+  id: string;
+  photo: string;
+}
+
 function DesktopHome() {
   const isXXL = useBreakpointValue({
-    "2xl": false,
-    xl: true,
-    lg: true,
-    md: true,
-    base: true,
+    "2xl": true,
+    xl: false,
+    lg: false,
+    md: false,
+    base: false,
   });
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [categories, setCategories] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
-  const [sliders, setSliders] = useState<any[]>([]);
+  const [sliders, setSliders] = useState<Slider[]>([]);
 
-  useEffect(() => {
-    const fetchSliders = async () => {
-      try {
-        const response = await fetch(`${API_URL}/get_sliders.php`);
-        const data = await response.json();
-        if (data.status === "success") {
-          setSliders(data.sliders.reverse());
-        } else {
-          console.error('Sliderlar yüklenemedi');
-        }
-      } catch (error) {
-        console.error("Veri alınırken hata oluştu:", error);
+  const fetchSliders = async () => {
+    try {
+      const response = await fetch(`${API_URL}/get_sliders.php`);
+      const data = await response.json();
+      if (data.status === "success") {
+        setSliders(data?.sliders);
+      } else {
+        console.error('Sliderlar yüklenemedi');
       }
-    };
+    } catch (error) {
+      console.error("Veri alınırken hata oluştu:", error);
+    }
+  };
 
+  const getProducts = async () => {
+    try {
+      const response = await fetch(`${API_URL}/get_categories.php`);
+      const data = await response.json();
+      setCategories(data);
+      // İlk kategori seçili olarak gelsin
+      if (data.length > 0) {
+        setSelectedCategory(data[0]); // İlk kategoriyi seçiyoruz
+      }
+    } catch (error) {
+      console.error('Veriler yüklenemedi:', error);
+    }
+  };
+  useEffect(() => {
     fetchSliders();
-  }, []);
-
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const response = await fetch(`${API_URL}/get_categories.php`);
-        const data = await response.json();
-        setCategories(data);
-        // İlk kategori seçili olarak gelsin
-        if (data.length > 0) {
-          setSelectedCategory(data[0]); // İlk kategoriyi seçiyoruz
-        }
-      } catch (error) {
-        console.error('Veriler yüklenemedi:', error);
-      }
-    };
     getProducts();
   }, []);
 
@@ -86,43 +88,43 @@ function DesktopHome() {
 
   return (
     <>
-      {sliders.length > 0 && (
-        <Image
-          key={sliders[0].id}
-          src={`${API_URL}/${sliders[0]?.photo}`}
-          alt="Slider"
-          w="100%"
-          h="700px"
-          objectFit={"cover"}
-        />
-      )}
-      <Flex
-        align={"center"}
-        width={{ base: "100%", xl: "1440px" }}
-        maxWidth={{ base: "100%", xl: "1440px" }}
-        px={{ base: "16px", md: "72px", xl: "165px" }}
-        margin="auto"
-        alignItems={"flex-start"}
-        flexDirection={"column"}
-      >
-        {!isXXL && (
+      {isXXL ? (
+        <Flex
+          align={"center"}
+          width={{ base: "100%", xl: "1440px" }}
+          maxWidth={{ base: "100%", xl: "1440px" }}
+          px={{ base: "16px", md: "72px", xl: "165px" }}
+          margin="auto"
+          alignItems={"flex-start"}
+          flexDirection={"column"}
+        >
           <Image
             alt="slider"
-            src="/sliderDesktop.webp"
+            src={`${API_URL}/${sliders[sliders.length - 1]?.photo}`}
             w={"100%"}
-            h={"100%"}
+            h="600px"
+            objectFit={"cover"}
             borderBottomLeftRadius={10}
             borderBottomRightRadius={10}
           />
-        )}
-      </Flex>
+        </Flex>
+      ) : (
+        <Image
+          key={sliders[0]?.id}
+          src={`${API_URL}/${sliders[sliders.length - 1]?.photo}`}
+          alt="slider"
+          w="100%"
+          h="600px"
+          objectFit={"cover"}
+        />
+      )}
 
       <VStack
         mt={50}
         mb={50}
         direction="row"
         flexDirection={"row"}
-        paddingLeft={!isXXL ? "725px" : "170px"}
+        paddingLeft={isXXL ? "725px" : "170px"}
         overflowY="auto"
         width={"100%"}
         sx={{
@@ -166,12 +168,12 @@ function DesktopHome() {
               _hover={{
                 borderColor: "#282D31",
                 backgroundColor: "#282D31",
-                color: "white",
+                color: "#fff",
               }}
               _active={{
                 borderColor: "#282D31",
                 backgroundColor: "#282D31",
-                color: "white",
+                color: "#fff",
               }}
               _focus={{ boxShadow: "none" }}
             >

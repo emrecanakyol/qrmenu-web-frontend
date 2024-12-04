@@ -2,16 +2,16 @@
 include('db_connection.php');
 
 try {
-    // Veritabanı bağlantısı
+    // Veritabanı bağlantısı oluşturuyoruz
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Sliderları al
+    // Sliderları alıyoruz
     $selectQuery = "SELECT id, photo FROM sliders";
     $stmt = $pdo->prepare($selectQuery);
     $stmt->execute();
 
-    // Sonuçları al
+    // Sonuçları alıyoruz
     $sliders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Sliderlar varsa

@@ -141,7 +141,7 @@ const HeaderMobile = () => {
                     </Text>
                   </Flex>
                 </NextLink>
-                {/* <NextLink href="/account" onClick={onClose}>
+                <NextLink href="/admin" onClick={onClose}>
                   <Flex align={"center"} mt={"10px"}>
                     <ChevronRightIcon
                       fontSize={"18px"}
@@ -158,7 +158,7 @@ const HeaderMobile = () => {
                       Hesap
                     </Text>
                   </Flex>
-                </NextLink> */}
+                </NextLink>
               </DrawerBody>
               <DrawerFooter
                 display={"flex"}

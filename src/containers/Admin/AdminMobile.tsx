@@ -2,9 +2,11 @@
 import { API_URL } from "@/api/constants";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, Flex, Text, Input, Button, FormControl, FormLabel, Image, Select, useBreakpointValue, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, VStack, IconButton, Heading } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useState, ChangeEvent, useEffect } from "react";
 
 const AdminMobile: React.FC = () => {
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [categoryName, setCategoryName] = useState<string>("");
   const [categoryPhoto, setCategoryPhoto] = useState<File | null>(null);
@@ -21,7 +23,6 @@ const AdminMobile: React.FC = () => {
   const [sliderPreviewUrl, setSliderPreviewUrl] = useState<string | null>(null);
   const [photoSliderPreviewUrl, setPhotoSliderPreviewUrl] = useState<string | null>(null);
   const [sliderId, setSliderId] = useState<number | null>(null);
-
 
   // Slider fotoğrafını yüklemek için handlePhotoChange fonksiyonu
   const handleSliderPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {

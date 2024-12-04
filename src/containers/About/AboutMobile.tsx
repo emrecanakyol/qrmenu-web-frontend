@@ -19,15 +19,16 @@ const AboutMobile = () => {
         fontWeight={"normal"}
         marginBottom={"25px"}
       >
-        Trabzonun eşsiz lezzetlerini denizden sofralarınıza getiriyoruz! Denizin taptaze kokusu eşliğinde, Karadeniz’in en lezzetli balıklarını sizlerle buluşturuyoruz. Usta şeflerimizin özenle hazırladığı menümüzde, hamsiden levreğe, mezgitten çupraya kadar en taze balık çeşitlerini bulabilirsiniz. Deniz ürünleriyle harmanlanmış mezelerimiz ve Karadeniz mutfağının zengin tatları, damaklarınıza unutulmaz bir yolculuk yaşatacak.
+        Kılıç Kanat olarak, tavuk lezzetini en kaliteli ve en taze şekilde sofralarınıza sunuyoruz! Usta şeflerimizin özenle hazırladığı ızgara tavuk çeşitlerimiz, eşsiz marinasyonlarla tatlandırılıyor ve her bir lokmada mükemmel bir lezzet deneyimi yaşatıyor. Farklı tatlar arayanlara, tavuk kanadından şişe, tavuk pirzoladan spesyal çeşitlere kadar geniş bir menü sunuyoruz.
       </Text>
       <Text
         color="#000"
         fontSize="16px"
         fontWeight={"normal"}
         marginBottom={"50px"}
+        paddingBottom={"50px"}
       >
-        Sevdiklerinizle keyifli bir akşam yemeği, özel kutlamalar ya da Trabzon’un muhteşem manzarasında lezzet dolu bir öğle yemeği için sizleri bekliyoruz. Trabzonda balık keyfinin en doğru adresi!
+        Siz değerli misafirlerimize, lezzet dolu bir yemek keyfi yaşatırken, sağlıklı ve kaliteli malzemelerle hazırlanan yemeklerimizle de damak zevkinizi şımartıyoruz. Sevdiklerinizle birlikte sıcak bir akşam yemeği, arkadaşlarınızla keyifli bir buluşma ya da ailenizle birlikte unutulmaz bir öğün için Kılıç Kanat sizi bekliyor. Izgara tavuk keyfinin adresi Kılıç Kanat, her zaman taze, her zaman leziz!
       </Text>
     </Box>
   );

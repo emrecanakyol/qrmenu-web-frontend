@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useBreakpointValue } from "@chakra-ui/react";
 import AdminDesktop from "./AdminDesktop";
 import AdminMobile from "./AdminMobile";
+import { useRouter } from "next/navigation";
 
 function Index() {
   const isDesktop = useBreakpointValue({
@@ -11,6 +12,8 @@ function Index() {
     md: false,
     base: false,
   });
+  const router = useRouter();
+
   return <>{isDesktop ? <AdminDesktop /> : <AdminMobile />}</>;
 }
 
