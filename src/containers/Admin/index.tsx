@@ -1,20 +1,35 @@
-"use client";
-import React, { useEffect } from "react";
-import { useBreakpointValue } from "@chakra-ui/react";
+"use client"
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Box } from "@chakra-ui/react";
 import AdminDesktop from "./AdminDesktop";
 import AdminMobile from "./AdminMobile";
-import { useRouter } from "next/navigation";
+import { useBreakpointValue } from "@chakra-ui/react";
 
-function Index() {
+const AdminPage = () => {
   const isDesktop = useBreakpointValue({
     xl: true,
     lg: true,
     md: false,
     base: false,
   });
+
   const router = useRouter();
 
-  return <>{isDesktop ? <AdminDesktop /> : <AdminMobile />}</>;
-}
+  useEffect(() => {
+    // Giriş kontrolü
+    const isLoggedIn = sessionStorage.getItem('user_id');  // veya localStorage veya API ile kontrol edebilirsiniz
 
-export default Index;
+    if (!isLoggedIn) {
+      router.push('/login');  // Giriş yapılmamışsa login sayfasına yönlendir
+    }
+  }, [router]);
+
+  return (
+    <Box>
+      {isDesktop ? <AdminDesktop /> : <AdminMobile />}
+    </Box>
+  );
+};
+
+export default AdminPage;

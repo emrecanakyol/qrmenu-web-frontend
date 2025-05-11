@@ -1,44 +1,50 @@
 <?php
-include 'db_connection.php';  // Veritabanı bağlantısı
+session_start();  // Oturumu başlatıyoruz
 
-// Kullanıcıdan gelen JSON verilerini al
+include_once 'db_connection.php';  // Veritabanı bağlantısını dahil et
+
+// JSON verisini al
 $data = json_decode(file_get_contents("php://input"));
 
-// Form verileri
+// Kullanıcı adı ve şifreyi al
 $username = $data->username;
 $password = $data->password;
 
-// Kullanıcı adıyla veritabanında kontrol et
-$sql = "SELECT id, username, password FROM users WHERE username = ?";
-$stmt = $conn->prepare($sql);
-
-if ($stmt === false) {
-    die('SQL sorgusu hazırlanırken bir hata oluştu: ' . $conn->error);
-}
-
-$stmt->bind_param("s", $username);
-$stmt->execute();
-
-// bind_result() kullanarak veriyi almak
-$stmt->store_result();  // Veriyi belleğe tut
-
-if ($stmt->num_rows === 0) {
-    // Kullanıcı bulunamadı
-    echo json_encode(["error" => "Kullanıcı adı bulunamadı."]);
+// Gerekli alanları kontrol et
+if (empty($username) || empty($password)) {
+    echo json_encode(["success" => false, "error" => "Kullanıcı adı ve şifre gereklidir."]);
     exit();
 }
 
-// Kullanıcıyı doğrulamak için şifreyi kontrol et
-$stmt->bind_result($user_id, $db_username, $db_password);
+// Kullanıcı adını veritabanında ara
+$query = "SELECT id, username, password FROM users WHERE username = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$stmt->store_result();
+
+// Kullanıcı adı bulunamazsa hata mesajı döndür
+if ($stmt->num_rows == 0) {
+    echo json_encode(["success" => false, "error" => "Kullanıcı adı bulunamadı."]);
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+
+// Kullanıcıyı bulduk, şifreyi al
+$stmt->bind_result($id, $dbUsername, $dbPassword);
 $stmt->fetch();
 
-if (password_verify($password, $db_password)) {
-    // Başarılı giriş, çerez oluşturuluyor
-    setcookie("user_id", $user_id, time() + (86400 * 30), "/", "", isset($_SERVER["HTTPS"]), true);  // 30 gün geçerliliği olan çerez
-    echo json_encode(["success" => "Giriş başarılı.", "user_id" => $user_id]);
+// **Şifreyi olduğu gibi karşılaştırıyoruz çünkü hash kullanmıyoruz**
+if ($password !== $dbPassword) {
+    echo json_encode(["success" => false, "error" => "Geçersiz şifre."]);
 } else {
-    // Geçersiz şifre
-    echo json_encode(["error" => "Şifre yanlış."]);
+    // Başarılı giriş: oturumu başlat
+    $_SESSION['user_id'] = $id;  // Kullanıcı ID'sini session'a kaydediyoruz
+    $_SESSION['username'] = $username;  // Kullanıcı adı
+
+    // Giriş başarılı yanıtı
+    echo json_encode(["success" => true, "message" => "Giriş başarılı.", "user_id" => $id]);
 }
 
 $stmt->close();

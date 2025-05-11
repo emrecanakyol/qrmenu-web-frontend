@@ -2,8 +2,11 @@
 include('db_connection.php');
 
 try {
+    // PDO bağlantısını kurarken UTF-8 karakter seti kullan
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Veritabanı karakter setini utf8mb4 olarak ayarla
+    $pdo->exec("SET NAMES 'utf8mb4'");
 } catch (PDOException $e) {
     die("Veritabanı bağlantısı başarısız: " . $e->getMessage());
 }
@@ -20,7 +23,7 @@ if (!$tableExists) {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         photo VARCHAR(255) NOT NULL
-    )";
+    ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"; // UTF-8mb4 kullanarak tabloyu oluştur
     $pdo->exec($createTableQuery);
 }
 
@@ -39,8 +42,12 @@ if (!file_exists($uploadDir)) {
     mkdir($uploadDir, 0777, true); // Klasör yoksa oluştur
 }
 
-// Fotoğrafın yükleneceği yolu belirle
-$photoPath = $uploadDir . basename($categoryPhoto['name']);
+// Fotoğraf adı ve yolu
+$photoName = basename($categoryPhoto['name']);
+$photoName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $photoName); // Özel karakterleri _ ile değiştir
+$photoPath = $uploadDir . $photoName;
+
+// Fotoğrafın yüklenmesi
 if (!move_uploaded_file($categoryPhoto['tmp_name'], $photoPath)) {
     echo json_encode(['status' => 'error', 'message' => 'Fotoğraf yüklenemedi.']);
     exit;
@@ -53,6 +60,7 @@ $stmt->bindParam(':name', $categoryName);
 $stmt->bindParam(':photo', $photoPath);
 
 try {
+    // Kategoriyi veritabanına ekle
     $stmt->execute();
     echo json_encode(['status' => 'success', 'message' => 'Kategori başarıyla eklendi!']);
 } catch (PDOException $e) {

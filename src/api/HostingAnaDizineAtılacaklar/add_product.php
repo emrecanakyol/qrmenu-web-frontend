@@ -7,6 +7,9 @@ if ($conn->connect_error) {
     die(json_encode(['status' => 'error', 'message' => 'Bağlantı hatası: ' . $conn->connect_error]));
 }
 
+// Bağlantı sonrası karakter setini utf8mb4 olarak ayarlıyoruz
+$conn->set_charset("utf8mb4");
+
 // Veritabanında `products` tablosunun var olup olmadığını kontrol ediyoruz
 $table_check_query = "SHOW TABLES LIKE 'products'";
 $table_check_result = $conn->query($table_check_query);
@@ -20,7 +23,7 @@ if ($table_check_result->num_rows == 0) {
         product_name VARCHAR(255) NOT NULL,         -- Ürün adı
         product_price DECIMAL(10, 2) NOT NULL,      -- Ürün fiyatı (10 basamağa kadar, 2 ondalıklı)
         FOREIGN KEY (category_id) REFERENCES categories(id) -- Kategori ID'si, categories tablosundaki id ile ilişkilendirilir
-    )";
+    ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"; // Tabloyu utf8mb4 karakter seti ile oluştur
     
     if ($conn->query($create_table_query) === TRUE) {
         echo json_encode(['status' => 'success', 'message' => 'Tablo başarıyla oluşturuldu.']);

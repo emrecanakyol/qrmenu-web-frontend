@@ -233,6 +233,19 @@ const AdminMobile: React.FC = () => {
     onClose();
   };
 
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Gerçekten çıkmak istiyor musunuz?");
+
+    if (confirmLogout) {
+      // Oturumu sonlandırıyoruz
+      sessionStorage.removeItem('user_id');
+      sessionStorage.removeItem('username');
+
+      // Anasayfaya yönlendiriyoruz
+      router.push("/");
+    }
+  };
+
   return (
     <Box w="100%" pr={"12px"} pl={"12px"} bgColor={"#fff"}>
       <Flex
@@ -446,6 +459,18 @@ const AdminMobile: React.FC = () => {
                 {sliderId ? "Slider Fotoğrafını Güncelle" : "Slider Fotoğrafı Ekle"}
               </Button>
             </Box>
+          </VStack>
+
+          <VStack>
+            <Button
+              variant="link"
+              color="red"
+              fontSize="16px"
+              onClick={handleLogout}
+              mt={20}
+            >
+              Çıkış Yap
+            </Button>
           </VStack>
 
           <Modal isOpen={isOpen} onClose={onClose}>

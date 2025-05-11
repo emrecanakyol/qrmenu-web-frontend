@@ -232,25 +232,35 @@ const AdminDesktop: React.FC = () => {
     setActiveMenu(menu);
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`${API_URL}/logout.php`);
-      // Çıkış yaptıktan sonra login sayfasına yönlendir
-      router.push("/login");
-    } catch (error) {
-      console.error("Çıkış yapılırken hata oluştu", error);
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Gerçekten çıkmak istiyor musunuz?");
+
+    if (confirmLogout) {
+      // Oturumu sonlandırıyoruz
+      sessionStorage.removeItem('user_id');
+      sessionStorage.removeItem('username');
+
+      // Anasayfaya yönlendiriyoruz
+      router.push("/");
     }
   };
 
 
   return (
-    <Flex>
+    <Flex
+      align={"center"}
+      width={{ base: "100%", xl: "1440px" }}
+      maxWidth={{ base: "100%", xl: "1440px" }}
+      px={{ base: "16px", md: "72px", xl: "165px" }}
+      margin="auto"
+      alignItems={"flex-start"}
+    >
       <Box
         bg="teal.500"
         as="nav"
         color="white"
         width="290px"
-        minHeight="100vh"
+        minHeight="200vh"
         p={4}
         display={{ base: "none", md: "block" }}
       >
@@ -301,6 +311,7 @@ const AdminDesktop: React.FC = () => {
         backgroundColor="#fff"
         padding="54px"
         w="100%"
+        minHeight="200vh"
       >
         {activeMenu === "categories" && (
           <>

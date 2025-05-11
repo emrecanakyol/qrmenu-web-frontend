@@ -14,16 +14,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setTimeout(() => {
       setLoading(false)
     }, 1500)
-  },[])
+  }, [])
 
   return (
     <html lang="en">
       <body className={inter.className}>
-          <ChakraProvider>
-          <Header />
-          {/* {loading ? <Loading/> : children} */}
-          {children}
-          </ChakraProvider>
+        <ChakraProvider>
+          {loading ? <Loading /> :
+            (
+              <>
+                <Header />
+                {children}
+              </>
+            )}
+        </ChakraProvider>
       </body>
     </html>
   );
