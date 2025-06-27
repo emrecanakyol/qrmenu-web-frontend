@@ -24,6 +24,12 @@ const AdminDesktop: React.FC = () => {
   const [photoSliderPreviewUrl, setPhotoSliderPreviewUrl] = useState<string | null>(null);
   const [sliderId, setSliderId] = useState<number | null>(null);
   const [activeMenu, setActiveMenu] = useState<string>("categories");
+  const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
+  const [editingCategoryName, setEditingCategoryName] = useState<string>("");
+  const [editingCategoryPhoto, setEditingCategoryPhoto] = useState<File | null>(null);
+  const [editingProductId, setEditingProductId] = useState<number | null>(null);
+  const [editingProductName, setEditingProductName] = useState<string>("");
+  const [editingProductPrice, setEditingProductPrice] = useState<number | string>("");
 
   // Slider fotoğrafını yüklemek için handlePhotoChange fonksiyonu
   const handleSliderPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,6 +112,49 @@ const AdminDesktop: React.FC = () => {
     fetchProducts();
   }, [selectedCategory]);
 
+  //Ürün düzenleme
+  const startEditingProduct = (product: any) => {
+    setEditingProductId(product.id);
+    setEditingProductName(product.product_name);
+    setEditingProductPrice(product.product_price);
+  };
+  //Ürün düzenleme
+  const updateProduct = async () => {
+    if (editingProductId === null || !editingProductName || !editingProductPrice) {
+      alert("Ürün adı ve fiyatı boş bırakılamaz.");
+      return;
+    }
+
+    const formData = new URLSearchParams();
+    formData.append("product_id", editingProductId.toString());
+    formData.append("product_name", editingProductName);
+    formData.append("product_price", editingProductPrice.toString());
+
+    try {
+      const response = await fetch(`${API_URL}/update_product.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: formData
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        alert("Ürün başarıyla güncellendi.");
+        setEditingProductId(null);
+        setEditingProductName("");
+        setEditingProductPrice("");
+        fetchProducts(); // ürün listesini yeniden çek
+      } else {
+        alert(`Hata: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Ürün güncellenirken hata oluştu:", error);
+    }
+  };
+
+
+
   const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -143,6 +192,48 @@ const AdminDesktop: React.FC = () => {
       console.error("Kategori eklenirken hata oluştu:", error);
     }
   };
+
+  //Kategori Düzenleme
+  const startEditingCategory = (id: number, name: string) => {
+    setEditingCategoryId(id);
+    setEditingCategoryName(name);
+  };
+  //Kategori Düzenleme
+  const updateCategory = async () => {
+    if (editingCategoryId === null || editingCategoryName.trim() === "") {
+      alert("Kategori adı boş olamaz.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("category_id", editingCategoryId.toString());
+    formData.append("category_name", editingCategoryName);
+    if (editingCategoryPhoto) {
+      formData.append("category_photo", editingCategoryPhoto);
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/update_category.php`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        alert(result.message);
+        setEditingCategoryId(null);
+        setEditingCategoryName("");
+        setEditingCategoryPhoto(null);
+        fetchCategories();
+      } else {
+        alert(`Hata: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Kategori güncellenirken hata oluştu:", error);
+      alert("Bir hata oluştu.");
+    }
+  };
+
+
 
   const handleProductSubmit = async () => {
     if (selectedCategoryId === null || !productName || !productPrice) {
@@ -354,7 +445,7 @@ const AdminDesktop: React.FC = () => {
             {categories.length > 0 && (
               <VStack align="start" spacing={4} mt={100}>
                 <Heading fontSize="24px" color="teal.500">KATEGORİ LİSTESİ</Heading>
-                {categories.map((category) => (
+                {categories.map((category: any) => (
                   <Box
                     key={category.id}
                     p={4}
@@ -367,17 +458,83 @@ const AdminDesktop: React.FC = () => {
                     bg="white"
                     boxShadow="sm"
                   >
-                    <Text fontSize="16px">{category.name}</Text>
-                    <IconButton
-                      icon={<CloseIcon />}
-                      colorScheme="red"
-                      aria-label="Kategori sil"
-                      onClick={() => {
-                        deleteCategory(category.id);
-                      }}
-                    />
+                    {editingCategoryId === category.id ? (
+                      <>
+                        <Box mr={2}>
+                          {category.photo && (
+                            <Image
+                              src={`${API_URL}/${category.photo}`}
+                              alt="Mevcut Kategori Fotoğrafı"
+                              boxSize="200px"
+                              objectFit="cover"
+                              borderRadius="md"
+                              mb={2}
+                            />
+                          )}
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            size="m"
+                            mr={2}
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                setEditingCategoryPhoto(e.target.files[0]);
+                              }
+                            }}
+                          />
+                        </Box>
+                        <Input
+                          value={editingCategoryName}
+                          onChange={(e) => setEditingCategoryName(e.target.value)}
+                          size="sm"
+                          mr={2}
+                        />
+                        <Button
+                          colorScheme="green"
+                          onClick={updateCategory}
+                          size="sm"
+                          mr={2}
+                          p={4}
+                        >
+                          Kaydet
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => setEditingCategoryId(null)}>
+                          İptal
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Box w={"100%"}>
+                          {category.photo && (
+                            <Image
+                              src={`${API_URL}/${category.photo}`}
+                              alt="Mevcut Kategori Fotoğrafı"
+                              boxSize="50px"
+                              objectFit="cover"
+                              borderRadius="md"
+                              mb={1}
+                            />
+                          )}
+                          <Text fontSize="16px" color={"#000"}>{category.name}</Text>
+                        </Box>
+
+                        <Flex gap={2}>
+                          <Button size="sm" colorScheme="yellow" onClick={() => startEditingCategory(category.id, category.name)}>
+                            Düzenle
+                          </Button>
+                          <IconButton
+                            icon={<CloseIcon />}
+                            colorScheme="red"
+                            aria-label="Kategori sil"
+                            size="sm"
+                            onClick={() => deleteCategory(category.id)}
+                          />
+                        </Flex>
+                      </>
+                    )}
                   </Box>
                 ))}
+
               </VStack>
             )}
           </>
@@ -464,17 +621,54 @@ const AdminDesktop: React.FC = () => {
                         bg="white"
                         boxShadow="sm"
                       >
-                        <Text fontSize="16px" width={"33%"}>{product.product_name}</Text>
-                        <Text fontSize="16px" fontWeight="bold" width={"33%"}>{product.product_price} ₺</Text>
-
-                        <IconButton
-                          icon={<CloseIcon />}
-                          colorScheme="red"
-                          aria-label="Ürün sil"
-                          onClick={() => {
-                            deleteProduct(product.id);
-                          }}
-                        />
+                        {editingProductId === product.id ? (
+                          <>
+                            <Box>
+                              <FormLabel display={"flex"}>Ürün Adı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+                              <Input
+                                value={editingProductName}
+                                onChange={(e) => setEditingProductName(e.target.value)}
+                                size="sm"
+                                mr={2}
+                                width="33%"
+                              />
+                            </Box>
+                            <Box>
+                              <FormLabel display={"flex"}>Ürün Fiyatı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+                              <Input
+                                type="number"
+                                value={editingProductPrice}
+                                onChange={(e) => setEditingProductPrice(e.target.value)}
+                                size="sm"
+                                mr={2}
+                                width="33%"
+                              />
+                            </Box>
+                            <Button size="sm" colorScheme="green" onClick={updateProduct} mr={2}>
+                              Kaydet
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => setEditingProductId(null)}>
+                              İptal
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Text fontSize="16px" width={"33%"}>{product.product_name}</Text>
+                            <Text fontSize="16px" fontWeight="bold" width={"33%"}>{product.product_price} ₺</Text>
+                            <Flex gap={2}>
+                              <Button size="sm" colorScheme="yellow" onClick={() => startEditingProduct(product)}>
+                                Düzenle
+                              </Button>
+                              <IconButton
+                                icon={<CloseIcon />}
+                                colorScheme="red"
+                                aria-label="Ürün sil"
+                                onClick={() => deleteProduct(product.id)}
+                                size="sm"
+                              />
+                            </Flex>
+                          </>
+                        )}
                       </Box>
                     ))}
                   </VStack>

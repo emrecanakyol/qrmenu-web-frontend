@@ -1,7 +1,4 @@
 <?php
-header("Access-Control-Allow-Origin: *");  // Tüm domainlerden erişime izin verir
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");  // İzin verilen HTTP metotları
-header("Access-Control-Allow-Headers: Content-Type, Authorization");  // İzin verilen header'lar
 include_once 'db_connection.php';  // Veritabanı bağlantısını dahil et
 
 // Kullanıcı tablosunun var olup olmadığını kontrol et

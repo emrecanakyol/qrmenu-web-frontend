@@ -113,7 +113,7 @@ function MobileHome() {
             w={"10%"}
             h={"20%"}
             minW={"160px"}
-            backgroundColor={"#FFC801"}
+            backgroundColor={"#282D30"}
             borderRadius={10}
             p={3}
           >

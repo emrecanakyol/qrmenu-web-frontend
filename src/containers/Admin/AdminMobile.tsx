@@ -11,7 +11,7 @@ const AdminMobile: React.FC = () => {
   const [categoryName, setCategoryName] = useState<string>("");
   const [categoryPhoto, setCategoryPhoto] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [categories, setCategories] = useState<{ id: number, name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number, name: string, photo: string }[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [productName, setProductName] = useState<string>("");
@@ -23,6 +23,13 @@ const AdminMobile: React.FC = () => {
   const [sliderPreviewUrl, setSliderPreviewUrl] = useState<string | null>(null);
   const [photoSliderPreviewUrl, setPhotoSliderPreviewUrl] = useState<string | null>(null);
   const [sliderId, setSliderId] = useState<number | null>(null);
+  const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
+  const [editingCategoryName, setEditingCategoryName] = useState<string>("");
+  const [editingCategoryPhoto, setEditingCategoryPhoto] = useState<File | null>(null);
+  const [editingProductId, setEditingProductId] = useState<number | null>(null);
+  const [editingProductName, setEditingProductName] = useState<string>("");
+  const [editingProductPrice, setEditingProductPrice] = useState<string>("");
+
 
   // Slider fotoğrafını yüklemek için handlePhotoChange fonksiyonu
   const handleSliderPhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +117,32 @@ const AdminMobile: React.FC = () => {
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory]);
+
+  //Ürün düzenleme
+  const handleUpdateProduct = async (productId: number) => {
+    const formData = new FormData();
+    formData.append("product_id", productId.toString());
+    formData.append("product_name", editingProductName);
+    formData.append("product_price", editingProductPrice);
+
+    try {
+      const response = await fetch(`${API_URL}/update_product.php`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        alert("Ürün güncellendi.");
+        setEditingProductId(null);
+        fetchProducts(); // Ürünleri yeniden yükle
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Ürün güncellenirken hata oluştu:", error);
+    }
+  };
+
 
   const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -246,6 +279,33 @@ const AdminMobile: React.FC = () => {
     }
   };
 
+  //Kategori düzenleme
+  const handleUpdateCategory = async (id: number) => {
+    const formData = new FormData();
+    formData.append("category_id", id.toString());
+    formData.append("category_name", editingCategoryName);
+    if (editingCategoryPhoto) {
+      formData.append("category_photo", editingCategoryPhoto);
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/update_category.php`, {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        alert("Kategori güncellendi.");
+        setEditingCategoryId(null);
+        fetchCategories();
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Kategori güncellenirken hata:", error);
+    }
+  };
+
   return (
     <Box w="100%" pr={"12px"} pl={"12px"} bgColor={"#fff"}>
       <Flex
@@ -367,15 +427,91 @@ const AdminMobile: React.FC = () => {
                   bg="white"
                   boxShadow="sm"
                 >
-                  <Text fontSize="16px">{category.name}</Text>
-                  <IconButton
-                    icon={<CloseIcon />}
-                    colorScheme="red"
-                    aria-label="Kategori sil"
-                    onClick={() => {
-                      deleteCategory(category.id);
-                    }}
-                  />
+                  {editingCategoryId === category.id ? (
+                    <Box w="100%">
+                      <Input
+                        value={editingCategoryName}
+                        onChange={(e) => setEditingCategoryName(e.target.value)}
+                        placeholder="Kategori adını düzenle"
+                        mb={2}
+                      />
+
+                      {/* Eski fotoğraf gösterimi */}
+                      <Image
+                        src={`${API_URL}/${category.photo}`}
+                        alt="Eski Fotoğraf"
+                        boxSize="100px"
+                        objectFit="cover"
+                        borderRadius="md"
+                        mb={2}
+                      />
+
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        size="m"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            setEditingCategoryPhoto(e.target.files[0]);
+                          }
+                        }}
+                        mb={2}
+                        mt={2}
+                      />
+
+                      <Flex gap={2}>
+                        <Button
+                          size="sm"
+                          colorScheme="blue"
+                          onClick={() => handleUpdateCategory(category.id)}
+                        >
+                          Kaydet
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingCategoryId(null)}
+                        >
+                          İptal
+                        </Button>
+                      </Flex>
+                    </Box>
+                  ) : (
+                    <Flex w="100%" justify="space-between" align="center">
+                      <Box>
+                        {category.photo && (
+                          <Image
+                            src={`${API_URL}/${category.photo}`}
+                            alt="Mevcut Kategori Fotoğrafı"
+                            boxSize="50px"
+                            objectFit="cover"
+                            borderRadius="md"
+                            mb={1}
+                          />
+                        )}
+                        <Text>{category.name}</Text>
+                      </Box>
+                      <Flex gap={2}>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setEditingCategoryId(category.id);
+                            setEditingCategoryName(category.name);
+                          }}
+                        >
+                          Düzenle
+                        </Button>
+                        <IconButton
+                          icon={<CloseIcon />}
+                          size="sm"
+                          colorScheme="red"
+                          aria-label="Kategori sil"
+                          onClick={() => deleteCategory(category.id)}
+                        />
+                      </Flex>
+                    </Flex>
+                  )}
+
                 </Box>
               ))}
             </VStack>
@@ -419,19 +555,70 @@ const AdminMobile: React.FC = () => {
                       <Flex
                         alignItems={"center"}
                         justifyContent={"space-between"}>
-                        <Box>
-                          <Text fontSize="14px">{product.product_name}</Text>
-                          <Text fontSize="14px" fontWeight="bold" >{product.product_price} ₺</Text>
-                        </Box>
+                        {editingProductId === product.id ? (
+                          <Box>
+                            <FormLabel display={"flex"}>Ürün Adı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+                            <Input
+                              placeholder="Ürün Adı"
+                              value={editingProductName}
+                              onChange={(e) => setEditingProductName(e.target.value)}
+                              mb={2}
+                            />
+                            <FormLabel display={"flex"}>Ürün Fiyatı<Text color={"red"} fontSize={15}>*</Text></FormLabel>
+                            <Input
+                              placeholder="Ürün Fiyatı"
+                              type="number"
+                              value={editingProductPrice}
+                              onChange={(e) => setEditingProductPrice(e.target.value)}
+                              mb={2}
+                            />
+                            <Flex gap={2}>
+                              <Button
+                                size="sm"
+                                colorScheme="blue"
+                                onClick={() => handleUpdateProduct(product.id)}
+                              >
+                                Kaydet
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingProductId(null)}
+                              >
+                                İptal
+                              </Button>
+                            </Flex>
+                          </Box>
+                        ) : (
+                          <Flex align="center" justify="space-between" w={"100%"}>
+                            <Box>
+                              <Text fontSize="14px">{product.product_name}</Text>
+                              <Text fontSize="14px" fontWeight="bold">
+                                {product.product_price} ₺
+                              </Text>
+                            </Box>
+                            <Flex gap={2}>
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  setEditingProductId(product.id);
+                                  setEditingProductName(product.product_name);
+                                  setEditingProductPrice(product.product_price);
+                                }}
+                              >
+                                Düzenle
+                              </Button>
+                              <IconButton
+                                icon={<CloseIcon />}
+                                colorScheme="red"
+                                aria-label="Ürün sil"
+                                size="sm"
+                                onClick={() => deleteProduct(product.id)}
+                              />
+                            </Flex>
+                          </Flex>
+                        )}
 
-                        <IconButton
-                          icon={<CloseIcon />}
-                          colorScheme="red"
-                          aria-label="Ürün sil"
-                          onClick={() => {
-                            deleteProduct(product.id);
-                          }}
-                        />
                       </Flex>
                     </Box>
                   ))}
