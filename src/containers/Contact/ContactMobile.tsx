@@ -73,7 +73,7 @@ const ContactMobile = () => {
           </NextLink>
         </Flex>
 
-        <NextLink href="https://www.instagram.com/kilickanatsariyer/">
+        <NextLink href="https://www.instagram.com/craxcrispy/">
           <Flex
             gap={2}
             mt={{
@@ -86,7 +86,7 @@ const ContactMobile = () => {
           >
             <Image alt="instagram" src="/ins-icon.png" w={"20px"} h={"20px"} />
             <Text color={"#282d31"} fontWeight={"400"} fontSize={"18px"}>
-              @kilickanatsariyer
+              @craxcrispy
             </Text>
           </Flex>
         </NextLink>

@@ -87,12 +87,12 @@ const Contact = () => {
               <Image alt="tel" src="/tel-icon.png" w={"22px"} h={"22px"} />
               <NextLink href="tel:+902122993300" passHref>
                 <Text color={"#282d31"} fontWeight={"500"} fontSize={"18px"}>
-                  0 (212) 299 33 00
+                  0 (532) 012 70 65
                 </Text>
               </NextLink>
             </Flex>
 
-            <NextLink href="https://www.instagram.com/kilickanatsariyer/">
+            <NextLink href="https://www.instagram.com/craxcrispy/">
               <Flex
                 gap={2}
                 mt={{
@@ -110,7 +110,7 @@ const Contact = () => {
                   h={"20px"}
                 />
                 <Text color={"#282d31"} fontWeight={"400"} fontSize={"18px"}>
-                  @kilickanatsariyer
+                  @craxcrispy
                 </Text>
               </Flex>
             </NextLink>

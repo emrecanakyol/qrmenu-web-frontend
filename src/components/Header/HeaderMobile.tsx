@@ -175,7 +175,7 @@ const HeaderMobile = () => {
                     color: "#282d30"
                   }}
                 >
-                  © Van Gogh Cafe & Fast Food Qr Menu
+                  © Crax Crispy Qr Menu
                 </Text>
               </DrawerFooter>
             </DrawerContent>

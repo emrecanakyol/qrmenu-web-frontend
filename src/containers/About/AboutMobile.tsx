@@ -19,7 +19,7 @@ const AboutMobile = () => {
         fontWeight={"normal"}
         marginBottom={"25px"}
       >
-        Kılıç Kanat olarak, tavuk lezzetini en kaliteli ve en taze şekilde sofralarınıza sunuyoruz! Usta şeflerimizin özenle hazırladığı ızgara tavuk çeşitlerimiz, eşsiz marinasyonlarla tatlandırılıyor ve her bir lokmada mükemmel bir lezzet deneyimi yaşatıyor. Farklı tatlar arayanlara, tavuk kanadından şişe, tavuk pirzoladan spesyal çeşitlere kadar geniş bir menü sunuyoruz.
+        Crax Crispy olarak, tavuk lezzetini en kaliteli ve en taze şekilde sofralarınıza sunuyoruz! Usta şeflerimizin özenle hazırladığı ızgara tavuk çeşitlerimiz, eşsiz marinasyonlarla tatlandırılıyor ve her bir lokmada mükemmel bir lezzet deneyimi yaşatıyor. Farklı tatlar arayanlara, tavuk kanadından şişe, tavuk pirzoladan spesyal çeşitlere kadar geniş bir menü sunuyoruz.
       </Text>
       <Text
         color="#000"
@@ -28,7 +28,7 @@ const AboutMobile = () => {
         marginBottom={"50px"}
         paddingBottom={"50px"}
       >
-        Siz değerli misafirlerimize, lezzet dolu bir yemek keyfi yaşatırken, sağlıklı ve kaliteli malzemelerle hazırlanan yemeklerimizle de damak zevkinizi şımartıyoruz. Sevdiklerinizle birlikte sıcak bir akşam yemeği, arkadaşlarınızla keyifli bir buluşma ya da ailenizle birlikte unutulmaz bir öğün için Kılıç Kanat sizi bekliyor. Izgara tavuk keyfinin adresi Kılıç Kanat, her zaman taze, her zaman leziz!
+        Siz değerli misafirlerimize, lezzet dolu bir yemek keyfi yaşatırken, sağlıklı ve kaliteli malzemelerle hazırlanan yemeklerimizle de damak zevkinizi şımartıyoruz. Sevdiklerinizle birlikte sıcak bir akşam yemeği, arkadaşlarınızla keyifli bir buluşma ya da ailenizle birlikte unutulmaz bir öğün için Crax Crispy sizi bekliyor. Izgara tavuk keyfinin adresi Crax Crispy, her zaman taze, her zaman leziz!
       </Text>
     </Box>
   );
